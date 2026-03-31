@@ -1,0 +1,39 @@
+# Nuxt dev/build outputs
+frontend/.output
+frontend/.data
+frontend/.nuxt
+frontend/.nitro
+frontend/.cache
+frontend/dist
+
+# Node dependencies
+frontend/node_modules
+
+# Logs
+frontend/logs
+frontend/*.log
+
+# Misc
+frontend/.DS_Store
+frontend/.fleet
+frontend/.idea
+
+# Local env files
+frontend/.env
+frontend/.env.*
+frontend/!.env.example
+
+# Backend
+backend/.output
+backend/.data
+backend/__pycache__
+backend/.env
+backend/.env.*
+backend/!.env.example
+backend/logs
+backend/*.log
+backend/database.db
+backend/.venv
+backend/.vscode
+backend/.idea
+backend/test_main.http
