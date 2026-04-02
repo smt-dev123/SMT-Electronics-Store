@@ -88,10 +88,6 @@
             </h2>
             <div class="h-1 w-20 bg-blue-600 mt-2"></div>
           </div>
-          <p class="max-w-md text-sm text-zinc-500">
-            ប្រមូលផ្តុំដោយវិស្វករ
-            និងអ្នកជំនាញបច្ចេកវិទ្យាដែលមានចំណងចំណូលចិត្តខ្ពស់ក្នុងការចែករំលែក។
-          </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -164,28 +160,16 @@ const values = [
 
 const team = [
   {
-    name: "Sok Dara",
-    role: "Founder & CEO",
+    name: "LUY Sokmatra",
+    role: "Manager & Lead Developer",
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop",
+      "https://scontent.fpnh5-1.fna.fbcdn.net/v/t39.30808-6/468787606_1285325959135205_8154519391474085445_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=53a332&_nc_eui2=AeE8dst9pkm3dwLsgmpXtagPgWGOcz-F0qSBYY5zP4XSpBBguSvfiJfWyyEmcQ7lF8S9QaJ58hXYtHBA8ff37Aoe&_nc_ohc=8IPLSn0J4qIQ7kNvwFWvV4P&_nc_oc=AdpEyXBQ6g-xj_8AmqQm5-cuACcAEh3VKEdwLQxEgDO-MfUtelUOtSYys-8p891dprM&_nc_zt=23&_nc_ht=scontent.fpnh5-1.fna&_nc_gid=-pIpkkELR7kn-gMh7OD15g&_nc_ss=7a3a8&oh=00_Af0LJgo9DrfVXXkg6A-jkNmI-95hjV6WfEW31Io_QX6jrQ&oe=69D2C1A6",
   },
   {
-    name: "Chan Ty",
-    role: "Hardware Engineer",
+    name: "ROS Tola",
+    role: "Marketing & Sales",
     image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop",
-  },
-  {
-    name: "Keo Rotha",
-    role: "IoT Specialist",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop",
-  },
-  {
-    name: "Leng Somnang",
-    role: "Customer Success",
-    image:
-      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=500&fit=crop",
+      "https://scontent.fpnh5-2.fna.fbcdn.net/v/t39.30808-6/447220179_447586324569151_8567681764122741036_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeHUCkX8b4wGXO07RYVW5oVarVqR0a2aNNCtWpHRrZo00LGdiV7dYT1eyv9giXm6Yo84exOgwiopuIYj6XTGQ0Zi&_nc_ohc=iJOKhiAJBeIQ7kNvwFU5rmn&_nc_oc=Adq4AAA1EYU-KggwzR1sriQ9h8691xNqQscPPGgXAyp0uMNYUWcfQOMVEL3_u0qyYjA&_nc_zt=23&_nc_ht=scontent.fpnh5-2.fna&_nc_gid=taHT8hGDpbxC2htMlEkf4g&_nc_ss=7a3a8&oh=00_Af1SCAMVdmi6InE_jf1UYH1UfAub_S2-N0silLQzjuIWHg&oe=69D2DFEB",
   },
 ];
 </script>

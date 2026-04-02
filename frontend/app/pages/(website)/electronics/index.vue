@@ -128,7 +128,9 @@
                 <h3
                   class="font-bold text-base dark:text-white leading-tight min-h-[3rem] group-hover:text-blue-600 transition"
                 >
-                  {{ item.name }}
+                  <NuxtLink :to="`/electronics/${item.name}`">{{
+                    item.name
+                  }}</NuxtLink>
                 </h3>
 
                 <div

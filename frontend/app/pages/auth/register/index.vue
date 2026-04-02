@@ -16,10 +16,6 @@ const handleRegister = async () => {
     alert("Account created successfully!");
   }, 2000);
 };
-
-definePageMeta({
-  layout: "blank",
-});
 </script>
 
 <template>

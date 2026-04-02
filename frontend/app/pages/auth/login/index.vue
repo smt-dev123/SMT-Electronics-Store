@@ -6,19 +6,14 @@ const loading = ref(false);
 
 const handleLogin = async () => {
   loading.value = true;
-  // Simulate API Authentication
   setTimeout(() => {
     loading.value = false;
     console.log("Logging in...", {
       email: email.value,
       password: password.value,
     });
-    // បន្ទាប់ពី Login ជោគជ័យ អាចប្រើ navigateTo('/') ដើម្បីទៅកាន់ទំព័រដើម
-  }, 1500);
-
-  definePageMeta({
-    layout: "blank",
-  });
+    navigateTo("/admin/dashboard");
+  }, 500);
 };
 </script>
 
