@@ -1,0 +1,151 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(ulid())
+  username  String?
+  email     String   @unique
+  phone     String?  @db.VarChar(15)
+  password  String
+  role      Role     @default(USER)
+  profile   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id        String    @id @default(ulid())
+  name      String    @unique
+  icon      String?
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Category {
+  id        String    @id @default(ulid())
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id             String  @id @default(ulid())
+  name           String
+  slug           String  @unique
+  description    String?
+  stockQty       Int     @map("stock_qty")
+  price          Float
+  specifications Json?
+  discount       Float?  @default(0)
+  isActive       Boolean @default(true) @map("is_active")
+  isUsed         Boolean @default(false) @map("is_used")
+
+  brandId    String
+  brand      Brand    @relation(fields: [brandId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  datasheets  Datasheet[]
+  electronics Electronic[] // បើ Product មួយអាចមានអេឡិចត្រូនិចច្រើនប្រភេទ
+  images      ProductImage[] // ជំនួសអោយ Polymorphic
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Datasheet {
+  id        String   @id @default(ulid())
+  name      String
+  size      String
+  fileUrl   String   @map("file_url")
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Electronic {
+  id      String  @id @default(ulid())
+  sku     String  @unique
+  package String
+  inStock Boolean @default(true) @map("in_stock")
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  typeId String
+  type   Type   @relation(fields: [typeId], references: [id])
+
+  features   ElectronicFeature[]
+  bulkPrices BulkPrice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Type {
+  id          String       @id @default(ulid())
+  name        String
+  electronics Electronic[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Feature {
+  id          String              @id @default(ulid())
+  name        String
+  electronics ElectronicFeature[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model ElectronicFeature {
+  id    String @id @default(ulid())
+  value String
+
+  featureId String
+  feature   Feature @relation(fields: [featureId], references: [id])
+
+  electronicId String
+  electronic   Electronic @relation(fields: [electronicId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BulkPrice {
+  id     String @id @default(ulid())
+  minQty Int    @map("min_qty")
+  price  Float
+
+  electronicId String
+  electronic   Electronic @relation(fields: [electronicId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(ulid())
+  imageUrl  String   @map("image_url")
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// Enums
+enum Role {
+  USER
+  ADMIN
+  CUSTOMER
+  MANAGER
+}
