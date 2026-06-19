@@ -26,7 +26,8 @@ const menuItems = [
     label: "ផលិតផល",
     submenu: [
       { label: "ក្រុមហ៊ុន", url: "brand" },
-      { label: "ប្រភេទ", url: "category" },
+      { label: "ប្រភេទផលិតផល", url: "category" },
+      { label: "ប្រភេទគ្រឿង", url: "electronic_type" },
       { label: "ផលិតផល", url: "product" },
       { label: "គ្រឿងអេឡិចត្រូនិច", url: "electronic" },
     ],

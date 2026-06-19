@@ -1,3 +1,57 @@
+<script setup>
+const currentSlide = ref(0);
+let slideInterval = null;
+
+const startSlide = () => {
+  slideInterval = setInterval(() => {
+    currentSlide.value = (currentSlide.value + 1) % heroSlides.length;
+  }, 5000);
+};
+
+onMounted(() => startSlide());
+onUnmounted(() => clearInterval(slideInterval));
+
+const { data: fetchProducts } = useAPI("/products", {
+  query: { limit: 10 },
+  default: () => ({ data: [] }),
+});
+const { data: fetchElectronics } = useAPI("/electronics", {
+  query: { limit: 10 },
+  default: () => ({ data: [] }),
+});
+
+const {data: fetchCategories} = useAPI("/categories", {
+  query: { limit: 10 },
+  default: () => ({ data: [] }),
+})
+
+const categories = computed(() => fetchCategories.value?.data || []);
+const products = computed(() => fetchProducts.value?.data || []);
+const electronics = computed(() => fetchElectronics.value?.data || []);
+
+const heroSlides = [
+  {
+    badge: "ថ្មីមកដល់",
+    title:
+      'បច្ចេកវិទ្យា <span class="text-blue-600">IoT</span><br/>សម្រាប់អនាគតឆ្លាតវៃ',
+    description:
+      "ស្វែងរកគ្រឿងបន្លាស់អេឡិចត្រូនិច និងសេនស័រគ្រប់ប្រភេទ សម្រាប់គម្រោង Arduino និង Robotics របស់អ្នក ជាមួយតម្លៃសមរម្យ និងគុណភាពខ្ពស់។",
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    link: "#",
+  },
+  {
+    badge: "គុណភាពខ្ពស់",
+    title:
+      'គ្រឿងបន្លាស់ <span class="text-blue-600">Arduino</span><br/>ជំនាន់ថ្មី',
+    description:
+      "នាំចូលផ្ទាល់ពីរោងចក្រ មានគុណភាពខ្ពស់ ប្រើបានយូរ និងមានភាពច្បាស់លាស់ សមស្របសម្រាប់អ្នករៀន និងអ្នកជំនាញ។",
+    image: "https://images.unsplash.com/photo-1553406830-ef2513450d76",
+    link: "#",
+  },
+];
+</script>
+
+
 <template>
   <main class="bg-white dark:bg-zinc-950 min-h-screen">
     <section
@@ -81,15 +135,15 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <UiCardName
-            v-for="(category, index) in categories"
-            :key="index"
+            v-for="category in categories"
+            :key="category.id"
             :name="category.name"
-            :icon="category.icon"
           />
         </div>
       </div>
     </section>
 
+    <!-- ផលិតផលថ្មីៗ -->
     <section class="container mx-auto px-4 py-8">
       <div class="flex justify-between items-end mb-10">
         <div>
@@ -111,9 +165,9 @@
           :key="product.id"
           :name="product.name"
           :slug="product.slug"
-          :category="product.category"
+          :category="product.categories?.[0]?.name"
           :price="product.price"
-          :oldPrice="product.oldPrice"
+          :oldPrice="product.price * (1 + (product.discount || 0) / 100)"
           :discount="product.discount"
           :image="product.image"
         />
@@ -137,13 +191,13 @@
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <UiCard
-          v-for="product in products"
+          v-for="product in electronics"
           :key="product.id"
           :name="product.name"
           :slug="product.slug"
-          :category="product.category"
+          :category="product.categories?.[0]?.name"
           :price="product.price"
-          :oldPrice="product.oldPrice"
+          :oldPrice="product.price * (1 + (product.discount || 0) / 100)"
           :discount="product.discount"
           :image="product.image"
         />
@@ -152,112 +206,6 @@
   </main>
 </template>
 
-<script setup>
-const currentSlide = ref(0);
-let slideInterval = null;
-
-const startSlide = () => {
-  slideInterval = setInterval(() => {
-    currentSlide.value = (currentSlide.value + 1) % heroSlides.length;
-  }, 5000);
-};
-
-onMounted(() => startSlide());
-onUnmounted(() => clearInterval(slideInterval));
-
-const heroSlides = [
-  {
-    badge: "ថ្មីមកដល់",
-    title:
-      'បច្ចេកវិទ្យា <span class="text-blue-600">IoT</span><br/>សម្រាប់អនាគតឆ្លាតវៃ',
-    description:
-      "ស្វែងរកគ្រឿងបន្លាស់អេឡិចត្រូនិច និងសេនស័រគ្រប់ប្រភេទ សម្រាប់គម្រោង Arduino និង Robotics របស់អ្នក ជាមួយតម្លៃសមរម្យ និងគុណភាពខ្ពស់។",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    link: "#",
-  },
-  {
-    badge: "គុណភាពខ្ពស់",
-    title:
-      'គ្រឿងបន្លាស់ <span class="text-blue-600">Arduino</span><br/>ជំនាន់ថ្មី',
-    description:
-      "នាំចូលផ្ទាល់ពីរោងចក្រ មានគុណភាពខ្ពស់ ប្រើបានយូរ និងមានភាពច្បាស់លាស់ សមស្របសម្រាប់អ្នករៀន និងអ្នកជំនាញ។",
-    image: "https://images.unsplash.com/photo-1553406830-ef2513450d76",
-    link: "#",
-  },
-];
-
-const categories = [
-  { name: "Arduino", icon: "lucide:cpu" },
-  { name: "Sensors", icon: "lucide:thermometer" },
-  { name: "IoT", icon: "lucide:wifi" },
-  { name: "Motors", icon: "lucide:cog" },
-  { name: "Power", icon: "lucide:battery-charging" },
-  { name: "Tools", icon: "lucide:wrench" },
-];
-
-const products = [
-  {
-    id: 1,
-    name: "Arduino Uno R3 Original (Made in Italy)",
-    slug: "arduino-uno-r3-original",
-    category: "Microcontroller",
-    price: 22.0,
-    oldPrice: 25.0,
-    discount: 10,
-    image:
-      "https://cdn.webshopapp.com/shops/346407/files/437661063/otronic-starter-kit-for-arduino-uno-r3-with-096-in.jpg",
-  },
-  {
-    id: 2,
-    name: "ESP32-DevKitC-32D Development Board WiFi+BT",
-    slug: "esp32-devkitc-32d",
-    category: "IoT Modules",
-    price: 8.5,
-    image:
-      "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=600&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    name: "HC-SR04 Ultrasonic Distance Sensor Module",
-    slug: "hc-sr04-ultrasonic-sensor",
-    category: "Sensors",
-    price: 1.2,
-    oldPrice: 1.5,
-    discount: 20,
-    image:
-      "https://europe1.discourse-cdn.com/arduino/original/4X/d/a/c/daca63ee95704fbeb0e0a06407a3bef4dc3022e8.jpeg  ",
-  },
-  {
-    id: 4,
-    name: "SG90 Micro Servo Motor 9g for Rc Robot",
-    slug: "sg90-micro-servo-motor",
-    category: "Motors",
-    price: 2.1,
-    image:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=600&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    name: "5V 2A Power Adapter for Arduino Projects",
-    slug: "5v-2a-power-adapter",
-    category: "Power",
-    price: 3.0,
-    oldPrice: 4.0,
-    discount: 25,
-    image:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=600&auto=format&fit=crop",
-  },
-  {
-    id: 6,
-    name: "Multimeter Digital Voltmeter Ammeter Ohmmeter",
-    slug: "multimeter-digital-voltmeter",
-    category: "Tools",
-    price: 15.0,
-    image:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=600&auto=format&fit=crop",
-  },
-];
-</script>
 
 <style scoped>
 @keyframes slide-up {

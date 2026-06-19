@@ -1,3 +1,6 @@
+example/
+backend-fastapi/
+
 # Nuxt dev/build outputs
 frontend/.output
 frontend/.data

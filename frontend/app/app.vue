@@ -26,7 +26,7 @@ useSeoMeta({
 <template>
   <div>
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage :key="$route.fullPath" />
     </NuxtLayout>
   </div>
 </template>

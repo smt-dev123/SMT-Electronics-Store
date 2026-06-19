@@ -1,0 +1,96 @@
+<script setup lang="ts">
+import { useQuery } from "@tanstack/vue-query";
+import type { BulkPriceType } from "~/types";
+import Create from "./-Actions/Create.vue";
+import Update from "./-Actions/Update.vue";
+
+const search = ref("");
+const { fetchData, confirmDelete, deleteMutation } = useBulkPrices();
+
+const { isLoading, isError, refetch, data, error } = useQuery<BulkPriceType[]>({
+  queryKey: ["bulk-prices"],
+  queryFn: fetchData,
+});
+
+const filteredData = computed(() => {
+  if (!data.value) return [];
+  if (!search.value) return data.value;
+  return data.value.filter((item: BulkPriceType) =>
+    item.electronicId?.toLowerCase().includes(search.value.toLowerCase()) || 
+    item.minQty?.toString().includes(search.value)
+  );
+});
+</script>
+
+<template>
+  <div class="flex flex-col gap-4 w-full">
+    <!-- Header -->
+    <el-card shadow="never">
+      <el-page-header>
+        <template #content>
+          <span class="text-large font-600 mr-3">តម្លៃលក់ដុំ (Bulk Prices)</span>
+        </template>
+        <template #extra>
+          <Create />
+        </template>
+      </el-page-header>
+    </el-card>
+
+    <!-- Content -->
+    <el-card shadow="never">
+      <CommonLoadingState v-if="isLoading" />
+
+      <CommonErrorState
+        v-else-if="isError"
+        :description="error?.message"
+        @retry="refetch"
+      />
+
+      <!-- Table -->
+      <el-table v-else :data="filteredData" style="width: 100%">
+        <el-table-column type="index" label="ល.រ" width="70" sortable fixed />
+        
+        <el-table-column prop="minQty" label="ចំនួនអប្បបរមា (Min Qty)" sortable />
+        <el-table-column prop="price" label="តម្លៃ (Price)" sortable>
+          <template #default="{ row }">
+            ${{ row.price }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="electronicId" label="លេខកូដ Electronic" sortable />
+
+        <el-table-column label="កាលបរិច្ឆេទបង្កើត">
+          <template #default="{ row }">
+            {{ formatDate(row.createdAt) }}
+          </template>
+        </el-table-column>
+        <el-table-column width="180" fixed="right">
+          <template #header>
+            <!-- Search -->
+            <div class="flex items-center gap-2">
+              <el-input
+                v-model="search"
+                placeholder="ស្វែងរក..."
+                clearable
+                style="width: 250px"
+              />
+            </div>
+          </template>
+          <template #default="scope">
+            <Update :data="scope.row" />
+            <el-button
+              type="danger"
+              size="small"
+              :loading="
+                deleteMutation.isPending.value &&
+                deleteMutation.variables.value === scope.row.id
+              "
+              @click="confirmDelete(scope.row.id)"
+            >
+              លុប
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+  </div>
+</template>

@@ -5,9 +5,15 @@ const props = defineProps<{
   discount?: number;
   category?: string;
   image?: string;
-  price?: number;
-  oldPrice?: number;
+  price: number;
 }>();
+
+const newPrice = computed(() => {
+  if (props.discount && props.price) {
+    return props.price - (props.price * props.discount) / 100;
+  }
+  return props.price || 0;
+});
 </script>
 
 <template>
@@ -16,13 +22,19 @@ const props = defineProps<{
   >
     <div class="h-[200px] overflow-hidden bg-gray-100 dark:bg-zinc-800">
       <img
-        :src="props.image"
+        :src="
+          props.image ||
+          'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
+        "
         :alt="props.name"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
     </div>
 
-    <div class="absolute top-2 left-2">
+    <div
+      v-if="props.discount && props.discount > 0"
+      class="absolute top-2 left-2"
+    >
       <span
         class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 uppercase"
         >{{ props.discount }}% OFF</span
@@ -44,10 +56,12 @@ const props = defineProps<{
       <div class="flex items-center justify-between mt-4">
         <div class="flex flex-col">
           <span class="font-bold text-lg text-blue-600"
-            >${{ props.price }}</span
+            >${{ newPrice.toFixed(2) }}</span
           >
-          <span class="text-md text-gray-400 line-through"
-            >${{ props.oldPrice }}</span
+          <span
+            v-if="props.price !== newPrice"
+            class="text-md text-gray-400 line-through"
+            >${{ props.price }}</span
           >
         </div>
         <button
