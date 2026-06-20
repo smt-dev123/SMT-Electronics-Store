@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE_PROVIDER } from 'src/core/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from 'src/core/database/schema';
-import { eq, ilike, or, sql } from 'drizzle-orm';
+import { and, desc, eq, ilike, isNull, notExists, or, sql } from 'drizzle-orm';
 
 @Injectable()
 export class ProductsRepository {
@@ -41,6 +41,11 @@ export class ProductsRepository {
           brand: true,
           category: true,
           datasheet: true,
+          electronics: {
+            with: {
+              electronicTypes: true,
+            },
+          },
         },
         orderBy: (products, { desc }) => [desc(products.createdAt)],
       }),
@@ -48,6 +53,43 @@ export class ProductsRepository {
         .select({ count: sql<number>`count(*)` })
         .from(schema.products)
         .where(whereClause),
+    ]);
+
+    return {
+      productsList,
+      totalItems: Number(totalItemsResult[0]?.count || 0),
+    };
+  }
+
+  async findAllProducts(whereClause: any, limit: number, offset: number) {
+    const notElectronicsClause = notExists(
+      this.db
+        .select()
+        .from(schema.electronics)
+        .where(eq(schema.electronics.productId, schema.products.id)),
+    );
+
+    const finalWhereClause = whereClause
+      ? and(whereClause, notElectronicsClause)
+      : notElectronicsClause;
+
+    const [productsList, totalItemsResult] = await Promise.all([
+      this.db.query.products.findMany({
+        where: finalWhereClause,
+        limit: limit,
+        offset: offset,
+        with: {
+          brand: true,
+          category: true,
+          datasheet: true,
+        },
+        orderBy: (products, { desc }) => [desc(products.createdAt)],
+      }),
+
+      this.db
+        .select({ count: sql<number>`count(*)` })
+        .from(schema.products)
+        .where(finalWhereClause),
     ]);
 
     return {

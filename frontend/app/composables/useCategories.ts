@@ -7,21 +7,17 @@ export const useCategories = () => {
   const ENDPOINT = "/categories";
   const queryClient = useQueryClient();
 
-  interface CategoryTypeResponse {
-    data?: CategoryType[];
-  }
-
   // --- READ ---
   const fetchData = async (): Promise<CategoryType[]> => {
-    const res = await $api.get<CategoryTypeResponse>(ENDPOINT);
-    return res.data?.data || [];
+    const res = await $api.get<CategoryType[]>(ENDPOINT);
+    return res.data || [];
   };
 
   const getDataById = async (id: number | string) => {
-    const res = await $api.get<CategoryTypeResponse>(`${ENDPOINT}/${id}`);
-    return res.data?.data || null;
+    const res = await $api.get<CategoryType>(`${ENDPOINT}/${id}`);
+    return res.data || null;
   };
-  
+
   // --- CREATE ---
   const createMutation = useMutation({
     mutationFn: (newBrand: Partial<CategoryType>) =>

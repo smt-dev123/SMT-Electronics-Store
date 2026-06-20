@@ -12,6 +12,5 @@ export const features = pgTable('features', {
 });
 
 export const featureRelationship = relations(features, ({ many }) => ({
-  electronics: many(electronics),
   electronics_feature: many(electronics_feature),
 }));

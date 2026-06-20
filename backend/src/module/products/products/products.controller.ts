@@ -25,11 +25,11 @@ export class ProductsController {
   @UseInterceptors(
     FileFieldsInterceptor(
       [
-        { name: 'thumbnail', maxCount: 1 }, // ទទួល Thumbnail ១សន្លឹក
-        { name: 'gallery', maxCount: 10 }, // ទទួល Gallery មិនលើសពី ១០សន្លឹក
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'gallery', maxCount: 10 },
       ],
       {
-        storage: memoryStorage(), // រក្សាទុកលើ RAM បណ្តោះអាសន្ន រង់ចាំរុញទៅ R2
+        storage: memoryStorage(), // រក្សាទុកលើ RAM បណ្តោះអាសន្ន ចាំផ្ញើទៅ R2
       },
     ),
   )
@@ -55,7 +55,7 @@ export class ProductsController {
     );
   }
 
-  @Get()
+  @Get('/all')
   findAll(
     @Query('search') search?: string,
     @Query('limit') limit?: string,
@@ -64,6 +64,17 @@ export class ProductsController {
     const limitNum = limit ? parseInt(limit, 10) : 10;
     const pageNum = page ? parseInt(page, 10) : 1;
     return this.productsService.findAll(search, limitNum, pageNum);
+  }
+
+  @Get()
+  findAllProducts(
+    @Query('search') search?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
+  ) {
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    const pageNum = page ? parseInt(page, 10) : 1;
+    return this.productsService.findAllProducts(search, limitNum, pageNum);
   }
 
   @Get(':slug')

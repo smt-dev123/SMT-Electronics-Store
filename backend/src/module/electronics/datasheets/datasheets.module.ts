@@ -5,5 +5,6 @@ import { DatasheetsController } from './datasheets.controller';
 @Module({
   controllers: [DatasheetsController],
   providers: [DatasheetsService],
+  exports: [DatasheetsService],
 })
 export class DatasheetsModule {}

@@ -19,14 +19,15 @@ export class FeaturesService {
     private db: NodePgDatabase<typeof schema>,
   ) {}
 
-  async create(createFeatureDto: CreateFeatureDto) {
+  async create(createFeatureDto: CreateFeatureDto, tx?: any) {
     try {
-      const data = await this.db
+      const dbClient = tx || this.db;
+      const [data] = await dbClient
         .insert(schema.features)
         .values(createFeatureDto)
         .returning();
 
-      await this.cacheManager.del(this.CACHE_KEY_LIST);
+      if (!tx) await this.cacheManager.del(this.CACHE_KEY_LIST);
       return data;
     } catch (error) {
       console.error('Error creating feature:', error);

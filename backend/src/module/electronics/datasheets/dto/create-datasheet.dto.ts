@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateDatasheetDto {
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   name!: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   size?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   file?: string;
 }

@@ -10,6 +10,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { CreateDatasheetDto } from 'src/module/electronics/datasheets/dto/create-datasheet.dto';
 import { CreateElectronicDto } from 'src/module/electronics/electronics/dto/create-electronic.dto';
 
 export class CreateProductDto {
@@ -70,6 +71,25 @@ export class CreateProductDto {
 
   @IsOptional()
   categoryName?: string;
+
+  @IsOptional()
+  @IsString()
+  datasheetId?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return value;
+  })
+  @IsObject()
+  @Type(() => CreateDatasheetDto)
+  datasheet?: CreateDatasheetDto;
 
   @IsOptional()
   @Transform(({ value }) => {

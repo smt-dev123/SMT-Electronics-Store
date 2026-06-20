@@ -5,5 +5,6 @@ import { ElectronicTypesController } from './electronic_types.controller';
 @Module({
   controllers: [ElectronicTypesController],
   providers: [ElectronicTypesService],
+  exports: [ElectronicTypesService],
 })
 export class ElectronicTypesModule {}

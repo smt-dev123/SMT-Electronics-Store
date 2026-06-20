@@ -4,22 +4,18 @@ import { ElMessage, ElMessageBox } from "element-plus";
 
 export const useElectronicTypes = () => {
   const { $api } = useNuxtApp();
-  const ENDPOINT = "/types";
+  const ENDPOINT = "/electronic-types";
   const queryClient = useQueryClient();
-
-  interface TypeElectronicTypeResponse {
-    data?: TypeElectronicType[];
-  }
 
   // --- READ ---
   const fetchData = async (): Promise<TypeElectronicType[]> => {
-    const res = await $api.get<TypeElectronicTypeResponse>(ENDPOINT);
-    return res.data?.data || [];
+    const res = await $api.get<TypeElectronicType[]>(ENDPOINT);
+    return res.data || [];
   };
 
   const getDataById = async (id: number | string) => {
-    const res = await $api.get<TypeElectronicTypeResponse>(`${ENDPOINT}/${id}`);
-    return res.data?.data || null;
+    const res = await $api.get<TypeElectronicType>(`${ENDPOINT}/${id}`);
+    return res.data || null;
   };
 
   // --- CREATE ---

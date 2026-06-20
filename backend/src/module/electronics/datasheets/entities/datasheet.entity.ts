@@ -11,16 +11,8 @@ export const datasheets = pgTable('datasheets', {
   name: varchar('name', { length: 255 }).notNull(),
   size: varchar('size', { length: 20 }),
   file: varchar('file', { length: 255 }),
-  productId: uuid('product_id')
-    .references(() => products.id, {
-      onDelete: 'cascade',
-    })
-    .unique(),
 });
 
-export const datasheetRelations = relations(datasheets, ({ one }) => ({
-  products: one(products, {
-    fields: [datasheets.id],
-    references: [products.id],
-  }),
+export const datasheetRelations = relations(datasheets, ({ many }) => ({
+  products: many(products),
 }));

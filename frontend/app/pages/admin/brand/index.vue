@@ -17,12 +17,12 @@ const { isLoading, isError, refetch, data, error } = useQuery<BrandType[]>({
 
 console.log("Brands Data:", data.value);
 const filteredData = computed(() => {
-  const brands = data.value || []; 
-  
+  const brands = data.value || [];
+
   if (!search.value) return brands;
 
   return brands.filter((item: BrandType) =>
-    item.name.toLowerCase().includes(search.value.toLowerCase())
+    item.name.toLowerCase().includes(search.value.toLowerCase()),
   );
 });
 </script>
@@ -73,11 +73,6 @@ const filteredData = computed(() => {
           </template>
         </el-table-column>
         <el-table-column prop="name" label="ឈ្មោះក្រុមហ៊ុន" sortable />
-        <el-table-column label="កាលបរិច្ឆេទបង្កើត">
-          <template #default="{ row }">
-            {{ formatDate(row.createdAt) }}
-          </template>
-        </el-table-column>
         <el-table-column width="180" fixed="right">
           <template #header>
             <!-- Search -->

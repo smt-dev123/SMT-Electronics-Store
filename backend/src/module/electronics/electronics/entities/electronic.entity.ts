@@ -14,7 +14,6 @@ export const electronics = pgTable('electronics', {
     .primaryKey(),
   sku: varchar('sku', { length: 255 }).notNull(),
   package: varchar('package', { length: 255 }).notNull(),
-  featureId: uuid('feature_id').references(() => features.id),
   electronicTypeId: uuid('electronic_type_id').references(
     () => electronicTypes.id,
   ),
@@ -24,10 +23,6 @@ export const electronics = pgTable('electronics', {
 });
 
 export const electronicsRelations = relations(electronics, ({ one, many }) => ({
-  features: one(features, {
-    fields: [electronics.featureId],
-    references: [features.id],
-  }),
   electronicTypes: one(electronicTypes, {
     fields: [electronics.electronicTypeId],
     references: [electronicTypes.id],

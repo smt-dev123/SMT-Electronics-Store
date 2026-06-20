@@ -49,11 +49,7 @@ const filteredData = computed(() => {
       <el-table v-else :data="filteredData" style="width: 100%">
         <el-table-column type="index" label="ល.រ" width="70" sortable fixed />
         <el-table-column prop="name" label="ឈ្មោះប្រភេទផលិតផល" sortable />
-        <el-table-column label="កាលបរិច្ឆេទបង្កើត">
-          <template #default="{ row }">
-            {{ formatDate(row.createdAt) }}
-          </template>
-        </el-table-column>
+
         <el-table-column width="180" fixed="right">
           <template #header>
             <!-- Search -->

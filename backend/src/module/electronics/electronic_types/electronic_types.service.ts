@@ -19,14 +19,15 @@ export class ElectronicTypesService {
     private db: NodePgDatabase<typeof schema>,
   ) {}
 
-  async create(createElectronicTypeDto: CreateElectronicTypeDto) {
+  async create(createElectronicTypeDto: CreateElectronicTypeDto, tx?: any) {
     try {
-      const data = await this.db
+      const dbClient = tx || this.db;
+      const [data] = await dbClient
         .insert(schema.electronicTypes)
         .values(createElectronicTypeDto)
         .returning();
 
-      await this.cacheManager.del(this.CACHE_KEY_LIST);
+      if (!tx) await this.cacheManager.del(this.CACHE_KEY_LIST);
       return data;
     } catch (error) {
       console.error('Error creating ElectronicType:', error);

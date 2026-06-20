@@ -23,8 +23,12 @@ export class DatasheetsService {
     try {
       const dbClient = tx || this.db;
       const existing = await dbClient.query.datasheets.findFirst({
-        where: (datasheets, { eq }) =>
-          eq(datasheets.name, createDatasheetDto.name),
+        where: (datasheets, { eq, and }) =>
+          and(
+            eq(datasheets.name, createDatasheetDto.name),
+            eq(datasheets.size, createDatasheetDto.size),
+            eq(datasheets.file, createDatasheetDto.file),
+          ),
       });
       if (existing) return existing;
 
@@ -106,13 +110,13 @@ export class DatasheetsService {
         .delete(schema.datasheets)
         .where(eq(schema.datasheets.id, id))
         .returning();
-      if (!data || data.length === 0) {
+      if (!data) {
         throw new NotFoundException(`Datasheet with ID ${id} not found`);
       }
 
       await this.cacheManager.del(this.CACHE_KEY_LIST);
       await this.cacheManager.del(`${this.CACHE_KEY_LIST}:${id}`);
-      return data[0];
+      return { message: 'Datasheet removed successfully' };
     } catch (error) {
       console.error('Error removing datasheet:', error);
       throw error;

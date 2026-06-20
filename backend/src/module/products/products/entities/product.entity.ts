@@ -36,6 +36,7 @@ export const products = pgTable('products', {
   isUsed: boolean('is_used').default(false).notNull(),
   brandId: uuid('brand_id').references(() => brands.id),
   categoryId: uuid('category_id').references(() => categories.id),
+  datasheetId: uuid('datasheet_id').references(() => datasheets.id),
 
   createdAt: timestamp('created_at', {
     withTimezone: true,
@@ -59,7 +60,11 @@ export const productRelations = relations(products, ({ one, many }) => ({
     references: [categories.id],
   }),
 
-  datasheet: one(datasheets),
+  datasheet: one(datasheets, {
+    fields: [products.datasheetId],
+    references: [datasheets.id],
+  }),
+
   images: many(images),
   bulk_price: many(bulkPrice),
   electronics: one(electronics),

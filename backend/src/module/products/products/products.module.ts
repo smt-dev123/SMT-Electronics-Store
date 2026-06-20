@@ -7,12 +7,14 @@ import { CategoriesModule } from 'src/module/products/categories/categories.modu
 import { BulkPriceModule } from 'src/module/electronics/bulk_price/bulk_price.module';
 import { ElectronicsModule } from 'src/module/electronics/electronics/electronics.module';
 import { ProductsRepository } from './products.repository';
+import { DatasheetsModule } from 'src/module/electronics/datasheets/datasheets.module';
 
 @Module({
   imports: [
     ImagesModule,
     BrandsModule,
     CategoriesModule,
+    DatasheetsModule,
     BulkPriceModule,
     ElectronicsModule,
   ],

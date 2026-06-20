@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ElectronicsService } from './electronics.service';
 import { CreateElectronicDto } from './dto/create-electronic.dto';
 import { UpdateElectronicDto } from './dto/update-electronic.dto';
@@ -13,8 +22,14 @@ export class ElectronicsController {
   }
 
   @Get()
-  findAll() {
-    return this.electronicsService.findAll();
+  findAll(
+    @Query('search') search?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
+  ) {
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    const pageNum = page ? parseInt(page, 10) : 1;
+    return this.electronicsService.findAll(search, limitNum, pageNum);
   }
 
   @Get(':id')
@@ -23,7 +38,10 @@ export class ElectronicsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateElectronicDto: UpdateElectronicDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateElectronicDto: UpdateElectronicDto,
+  ) {
     return this.electronicsService.update(id, updateElectronicDto);
   }
 

@@ -6,21 +6,16 @@ export const useBrands = () => {
   const { $api } = useNuxtApp();
   const ENDPOINT = "/brands";
   const queryClient = useQueryClient();
-  interface BrandTypeResponse {
-    data?: BrandType[];
-    total?: number;
-    total_pages?: number;
-  }
 
   // --- READ ---
   const fetchBrands = async (): Promise<BrandType[]> => {
-    const res = await $api.get<BrandTypeResponse>(ENDPOINT);
-    return res.data?.data || [];
+    const res = await $api.get<BrandType[]>(ENDPOINT);
+    return res.data || [];
   };
 
   const getBrandById = async (id: number | string) => {
-    const res = await $api.get<BrandTypeResponse>(`${ENDPOINT}/${id}`);
-    return res.data?.data || null;
+    const res = await $api.get<BrandType>(`${ENDPOINT}/${id}`);
+    return res.data || null;
   };
 
   // --- CREATE ---
@@ -31,7 +26,9 @@ export const useBrands = () => {
       ElMessage.success("បង្កើតបានជោគជ័យ");
     },
     onError: (error: any) => {
-      ElMessage.error(error.response?.data?.message || "មានបញ្ហាក្នុងការបង្កើត");
+      ElMessage.error(
+        error.response?.data?.message || "មានបញ្ហាក្នុងការបង្កើត",
+      );
     },
   });
 
@@ -44,7 +41,9 @@ export const useBrands = () => {
       ElMessage.success("កែប្រែបានជោគជ័យ");
     },
     onError: (error: any) => {
-      ElMessage.error(error.response?.data?.message || "មានបញ្ហាក្នុងការកែប្រែ");
+      ElMessage.error(
+        error.response?.data?.message || "មានបញ្ហាក្នុងការកែប្រែ",
+      );
     },
   });
 
@@ -64,16 +63,16 @@ export const useBrands = () => {
   const confirmDelete = async (id: number | string) => {
     try {
       await ElMessageBox.confirm(
-        'តើអ្នកប្រាកដថាចង់លុបម៉ាកយីហោនេះមែនទេ?',
-        'ការព្រមាន',
+        "តើអ្នកប្រាកដថាចង់លុបម៉ាកយីហោនេះមែនទេ?",
+        "ការព្រមាន",
         {
-          confirmButtonText: 'លុប',
-          cancelButtonText: 'បោះបង់',
-          type: 'warning',
-        }
+          confirmButtonText: "លុប",
+          cancelButtonText: "បោះបង់",
+          type: "warning",
+        },
       );
       await deleteMutation.mutateAsync(id);
-    } catch(error: any) {
+    } catch (error: any) {
       ElMessage.error(error);
     }
   };
@@ -84,6 +83,6 @@ export const useBrands = () => {
     createMutation,
     updateMutation,
     deleteMutation,
-    confirmDelete
+    confirmDelete,
   };
 };

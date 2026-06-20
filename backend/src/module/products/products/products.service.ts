@@ -17,6 +17,7 @@ import { BrandsService } from 'src/module/products/brands/brands.service';
 import { CategoriesService } from 'src/module/products/categories/categories.service';
 import { BulkPriceService } from 'src/module/electronics/bulk_price/bulk_price.service';
 import { ElectronicsService } from 'src/module/electronics/electronics/electronics.service';
+import { DatasheetsService } from 'src/module/electronics/datasheets/datasheets.service';
 
 @Injectable()
 export class ProductsService {
@@ -32,6 +33,7 @@ export class ProductsService {
     private readonly imagesService: ImagesService,
     private readonly brandsService: BrandsService,
     private readonly categoriesService: CategoriesService,
+    private readonly datasheetsService: DatasheetsService,
     private readonly bulksPriceService: BulkPriceService,
     private readonly electronicsService: ElectronicsService,
   ) {}
@@ -75,6 +77,7 @@ export class ProductsService {
       const {
         brandName,
         categoryName,
+        datasheet,
         electronics,
         bulkPrice,
         ...productData
@@ -84,6 +87,9 @@ export class ProductsService {
       const result = await this.db.transaction(async (tx) => {
         let finalBrandId = createProductDto.brandId;
         let finalCategoryId = createProductDto.categoryId;
+        let finalDatasheetId = createProductDto.datasheetId;
+
+        //
 
         if (brandName?.trim()) {
           const brand = await this.brandsService.create(
@@ -101,6 +107,14 @@ export class ProductsService {
           finalCategoryId = category.id;
         }
 
+        if (datasheet && datasheet.name && datasheet.name.trim() !== '') {
+          const newDatasheet = await this.datasheetsService.create(
+            datasheet,
+            tx,
+          );
+          finalDatasheetId = newDatasheet.id;
+        }
+
         // ២. បញ្ចូល Product ទៅ DB តាមរយៈ Repository
         const newProduct = await this.productsRepo.createProduct(
           {
@@ -110,6 +124,7 @@ export class ProductsService {
             thumbnailUrl,
             brandId: finalBrandId,
             categoryId: finalCategoryId,
+            datasheetId: finalDatasheetId,
             price: createProductDto.price.toString(),
             discount: createProductDto.discount?.toString(),
             specifications: createProductDto.specifications || {},
@@ -119,11 +134,7 @@ export class ProductsService {
         );
 
         // ៣. បញ្ចូលទិន្នន័យរងៗ
-        if (
-          electronics &&
-          Object.keys(electronics).length > 0 &&
-          electronics.sku
-        ) {
+        if (electronics && electronics.sku) {
           await this.electronicsService.create(
             { ...electronics, productId: newProduct.id },
             tx,
@@ -176,7 +187,7 @@ export class ProductsService {
       if (cleanSearch === 'undefined' || cleanSearch === 'null')
         cleanSearch = '';
 
-      const cacheKey = `products:search=${cleanSearch}:limit=${limit}:page=${page}`;
+      const cacheKey = `products:all:search=${cleanSearch}:limit=${limit}:page=${page}`;
       const cachedProducts = await this.cacheManager.get(cacheKey);
       if (cachedProducts) return cachedProducts;
 
@@ -190,6 +201,56 @@ export class ProductsService {
 
       const { productsList, totalItems } =
         await this.productsRepo.findAndCountAll(whereClause, limit, offset);
+      const totalPages = Math.ceil(totalItems / limit);
+
+      const response = {
+        data: productsList,
+        meta: {
+          totalItems,
+          itemCount: productsList.length,
+          itemsPerPage: limit,
+          totalPages,
+          currentPage: page,
+          isPreviousPage: page > 1,
+          isNextPage: page < totalPages,
+        },
+      };
+
+      await this.cacheManager.set(cacheKey, response, 5 * 60 * 1000);
+      await this.trackCacheKey(cacheKey);
+
+      return response;
+    } catch (error) {
+      console.error('Error finding products:', error);
+      throw error;
+    }
+  }
+
+  async findAllProducts(
+    search: string = '',
+    limit: number = 10,
+    page: number = 1,
+  ) {
+    try {
+      const offset = (page - 1) * limit;
+      let cleanSearch = String(search || '').trim();
+      if (cleanSearch === 'undefined' || cleanSearch === 'null')
+        cleanSearch = '';
+
+      const cacheKey = `products:non-electronics:search=${cleanSearch}:limit=${limit}:page=${page}`;
+      const cachedProducts = await this.cacheManager.get(cacheKey);
+      if (cachedProducts) return cachedProducts;
+
+      // បង្កើត Where Clause រួចហុចទៅឱ្យ Repo
+      const whereClause = cleanSearch
+        ? or(
+            ilike(schema.products.name, `%${cleanSearch}%`),
+            ilike(schema.products.description, `%${cleanSearch}%`),
+          )
+        : undefined;
+
+      const { productsList, totalItems } =
+        await this.productsRepo.findAllProducts(whereClause, limit, offset);
       const totalPages = Math.ceil(totalItems / limit);
 
       const response = {
