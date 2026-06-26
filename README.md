@@ -3,5 +3,5 @@
 ```
 ├── root/
 │ └── backend/      # Nest JS
-│ └── frontend/     # Nuxt JS
+│ └── frontend/     # Angular JS
 ```
