@@ -1,4 +1,4 @@
-## SMT-Electronics-Store (FastAPI + Nuxt)
+## SMT-Electronics-Store (NestJS + Angular)
 
 ```
 ├── root/
